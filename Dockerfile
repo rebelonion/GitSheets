@@ -24,17 +24,18 @@ RUN ./gradlew --no-daemon linkReleaseExecutableNativeApp
 FROM ubuntu:22.04
 
 RUN apt-get update && \
-    apt-get install -y curl git && \
-    rm -rf /var/lib/apt/lists/* && \
-    useradd -m -u 1000 appuser
+    apt-get install -y curl git su-exec && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/build/bin/nativeApp/releaseExecutable/GitSheets.kexe /usr/local/bin/gitsheets
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-RUN chmod +x /usr/local/bin/gitsheets
-
-USER appuser
+RUN chmod +x /usr/local/bin/gitsheets && \
+    chmod +x /usr/local/bin/entrypoint.sh
 
 WORKDIR /workspace
 
-# Default command
-ENTRYPOINT ["/usr/local/bin/gitsheets"]
+ENV PUID=1000
+ENV PGID=1000
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

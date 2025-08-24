@@ -60,6 +60,8 @@ Alternatively, configure using environment variables:
 - `DATA_PATH`: Data directory path (default: ./data)
 - `INTERVAL_MINUTES`: Check interval in minutes (default: 15)
 - `CONFIG_FILE`: Path to config.toml file
+- `PUID`: User ID to run as (default: 1000)
+- `PGID`: Group ID to run as (default: 1000)
 
 ## Usage
 
@@ -92,16 +94,25 @@ Use the pre-built Docker image from GitHub Container Registry:
 docker run -e GOOGLE_SHEET_ID="your-sheet-id" \
            -e GIT_REPO_URL="your-repo-url" \
            -e GIT_TOKEN="your-token" \
+           -e PUID=$(id -u) \
+           -e PGID=$(id -g) \
+           -v ./data:/workspace/data \
            ghcr.io/rebelonion/gitsheets:latest
 
 # Using config file
-docker run -v /path/to/config.toml:/workspace/config.toml \
+docker run -e PUID=$(id -u) \
+           -e PGID=$(id -g) \
+           -v /path/to/config.toml:/workspace/config.toml:ro \
+           -v ./data:/workspace/data \
            ghcr.io/rebelonion/gitsheets:latest --config /workspace/config.toml
 
 # Run once
 docker run -e GOOGLE_SHEET_ID="your-sheet-id" \
            -e GIT_REPO_URL="your-repo-url" \
            -e GIT_TOKEN="your-token" \
+           -e PUID=$(id -u) \
+           -e PGID=$(id -g) \
+           -v ./data:/workspace/data \
            ghcr.io/rebelonion/gitsheets:latest --run-once
 ```
 
@@ -116,7 +127,8 @@ services:
       - GIT_REPO_URL=your-repo-url
       - GIT_TOKEN=your-token
       - INTERVAL_MINUTES=30
-      - CONFIG_FILE=/workspace/config.toml # Optional
+      - PUID=1000  # Use your user ID
+      - PGID=1000  # Use your group ID
     volumes:
       - ./data:/workspace/data
 ```
