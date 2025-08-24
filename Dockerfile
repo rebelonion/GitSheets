@@ -24,7 +24,7 @@ RUN ./gradlew --no-daemon linkReleaseExecutableNativeApp
 FROM ubuntu:22.04
 
 RUN apt-get update && \
-    apt-get install -y curl git su-exec && \
+    apt-get install -y curl git gosu && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/build/bin/nativeApp/releaseExecutable/GitSheets.kexe /usr/local/bin/gitsheets
