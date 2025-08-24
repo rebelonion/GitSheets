@@ -45,15 +45,11 @@ data class AppConfig(
 )
 
 object ConfigLoader {
-    fun loadConfig(configDir: String? = null): AppConfig {
-        val configFile = if (configDir != null) {
-            "${configDir.removeSuffix("/")}/config.toml"
-        } else {
-            "config.toml"
-        }
+    fun loadConfig(configFile: String? = null): AppConfig {
+        val configFilePath = configFile ?: "config.toml"
         
-        val config = if (fileExists(configFile)) {
-            val tomlContent = readFile(configFile)
+        val config = if (fileExists(configFilePath)) {
+            val tomlContent = readFile(configFilePath)
             Toml.decodeFromString<AppConfig>(tomlContent)
         } else {
             loadFromEnv()

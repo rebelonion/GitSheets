@@ -4,9 +4,9 @@ fun main(args: Array<String>) {
     try {
         val runOnce = args.contains("--run-once") || args.contains("-o")
 
-        val configDir = parseConfigDir(args) ?: ConfigLoader.getEnv("CONFIG_DIR")
+        val configFile = parseConfigFile(args) ?: ConfigLoader.getEnv("CONFIG_FILE")
         
-        val config = ConfigLoader.loadConfig(configDir)
+        val config = ConfigLoader.loadConfig(configFile)
         val tracker = SheetsTracker(config)
 
         runBlocking {
@@ -18,7 +18,7 @@ fun main(args: Array<String>) {
     }
 }
 
-private fun parseConfigDir(args: Array<String>): String? {
+private fun parseConfigFile(args: Array<String>): String? {
     for (i in args.indices) {
         when (args[i]) {
             "--config", "-c" -> {

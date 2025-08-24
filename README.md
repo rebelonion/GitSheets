@@ -59,14 +59,14 @@ Alternatively, configure using environment variables:
 - `WEBHOOK_ENABLED`: Enable/disable webhooks (default: true)
 - `DATA_PATH`: Data directory path (default: ./data)
 - `INTERVAL_MINUTES`: Check interval in minutes (default: 15)
-- `CONFIG_DIR`: Directory containing config.toml file
+- `CONFIG_FILE`: Path to config.toml file
 
 ## Usage
 
 ### Command Line Arguments
 
 - `--run-once` or `-o`: Run once instead of continuous monitoring
-- `--config <path>` or `-c <path>`: Specify configuration directory
+- `--config <path>` or `-c <path>`: Specify configuration file path
 
 ### Examples
 
@@ -74,8 +74,8 @@ Alternatively, configure using environment variables:
 # Run continuously with default config
 ./gitsheets
 
-# Run once with custom config directory
-./gitsheets --config /path/to/config --run-once
+# Run once with custom config file
+./gitsheets --config /path/to/config.toml --run-once
 
 # Using environment variables
 GOOGLE_SHEET_ID="your-sheet-id" GIT_REPO_URL="your-repo-url" GIT_TOKEN="your-token" ./gitsheets
@@ -95,8 +95,8 @@ docker run -e GOOGLE_SHEET_ID="your-sheet-id" \
            ghcr.io/rebelonion/gitsheets:latest
 
 # Using config file
-docker run -v /path/to/config:/workspace/config \
-           ghcr.io/rebelonion/gitsheets:latest --config /workspace/config
+docker run -v /path/to/config.toml:/workspace/config.toml \
+           ghcr.io/rebelonion/gitsheets:latest --config /workspace/config.toml
 
 # Run once
 docker run -e GOOGLE_SHEET_ID="your-sheet-id" \
@@ -108,7 +108,6 @@ docker run -e GOOGLE_SHEET_ID="your-sheet-id" \
 ### Docker Compose
 
 ```yaml
-version: '3.8'
 services:
   gitsheets:
     image: ghcr.io/rebelonion/gitsheets:latest
@@ -117,6 +116,7 @@ services:
       - GIT_REPO_URL=your-repo-url
       - GIT_TOKEN=your-token
       - INTERVAL_MINUTES=30
+      - CONFIG_FILE=/workspace/config.toml # Optional
     volumes:
       - ./data:/workspace/data
 ```
