@@ -83,24 +83,26 @@ GOOGLE_SHEET_ID="your-sheet-id" GIT_REPO_URL="your-repo-url" GIT_TOKEN="your-tok
 
 ## Docker Usage
 
-### Building
+### Pre-built Image
 
-```bash
-docker build -t gitsheets .
-```
-
-### Running
+Use the pre-built Docker image from GitHub Container Registry:
 
 ```bash
 # Using environment variables
 docker run -e GOOGLE_SHEET_ID="your-sheet-id" \
            -e GIT_REPO_URL="your-repo-url" \
            -e GIT_TOKEN="your-token" \
-           gitsheets
+           ghcr.io/rebelonion/gitsheets:latest
 
 # Using config file
 docker run -v /path/to/config:/workspace/config \
-           gitsheets --config /workspace/config
+           ghcr.io/rebelonion/gitsheets:latest --config /workspace/config
+
+# Run once
+docker run -e GOOGLE_SHEET_ID="your-sheet-id" \
+           -e GIT_REPO_URL="your-repo-url" \
+           -e GIT_TOKEN="your-token" \
+           ghcr.io/rebelonion/gitsheets:latest --run-once
 ```
 
 ### Docker Compose
@@ -109,7 +111,7 @@ docker run -v /path/to/config:/workspace/config \
 version: '3.8'
 services:
   gitsheets:
-    build: .
+    image: ghcr.io/rebelonion/gitsheets:latest
     environment:
       - GOOGLE_SHEET_ID=your-sheet-id
       - GIT_REPO_URL=your-repo-url
@@ -118,6 +120,7 @@ services:
     volumes:
       - ./data:/workspace/data
 ```
+
 
 ## How It Works
 
