@@ -1,0 +1,10 @@
+services:
+  gitsheets:
+    build: .
+    container_name: gitsheets
+    volumes:
+      - .:/workspace
+      - ./config:/config:ro
+    environment:
+      - CONFIG_DIR=/config
+    # command: ["--run-once"]
