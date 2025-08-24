@@ -21,8 +21,10 @@ private fun addTokenToUrl(repoUrl: String, user: String, token: String): String 
     }
 }
 
-fun commitAndPush(config: AppConfig, message: String): Pair<Boolean, String?> {
+fun syncToRemoteAndCommit(config: AppConfig, message: String): Pair<Boolean, String?> {
     return try {
+        syncToRemote(config)
+
         executeCommand("git add .", config.general.dataPath)
 
         val diffResult = executeCommand("git diff --cached --quiet", config.general.dataPath, ignoreError = true)
@@ -40,3 +42,29 @@ fun commitAndPush(config: AppConfig, message: String): Pair<Boolean, String?> {
         Pair(false, e.message)
     }
 }
+
+private fun syncToRemote(config: AppConfig) {
+    try {
+        val remoteCheckResult = executeCommand("git ls-remote --exit-code origin", config.general.dataPath, ignoreError = true)
+        if (remoteCheckResult != 0) {
+            println("No remote repository found, skipping sync")
+            return
+        }
+
+        executeCommand("git fetch origin", config.general.dataPath)
+
+        val upToDateCheck = executeCommand("git diff --quiet HEAD origin/${config.git.branch}", config.general.dataPath, ignoreError = true)
+        if (upToDateCheck == 0) {
+            println("Already up to date with remote")
+            return
+        }
+
+        println("Syncing to remote state...")
+        executeCommand("git reset --hard origin/${config.git.branch}", config.general.dataPath)
+        println("Successfully synced to remote")
+
+    } catch (e: Exception) {
+        println("Warning: Failed to sync to remote: ${e.message}")
+    }
+}
+

@@ -6,13 +6,12 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
-import kotlinx.serialization.Serializable
-import util.commitAndPush
 import util.ensureDirectoryExists
 import util.fileExists
 import util.generateDetailedMessages
 import util.initializeGitRepo
 import util.readFile
+import util.syncToRemoteAndCommit
 import util.writeFile
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -83,7 +82,7 @@ class SheetsTracker(private val config: AppConfig) {
         writeFile(hashFile, currentHash)
 
         val commitMessage = "Update sheet data - ${Clock.System.now()}"
-        val (committed, error) = commitAndPush(config, commitMessage)
+        val (committed, error) = syncToRemoteAndCommit(config, commitMessage)
         if (committed) {
             if (detailedMessages.isNotEmpty() && detailedMessages.size < 10) {
                 detailedMessages.forEach { message ->
@@ -103,8 +102,7 @@ class SheetsTracker(private val config: AppConfig) {
 
     private suspend fun fetchSheetData(): String? {
         val url =
-            "https://docs.google.com/spreadsheets/d/${config.sheet.id}/export?format=csv" +
-            if (config.sheet.index >= 0) {
+            "https://docs.google.com/spreadsheets/d/${config.sheet.id}/export?format=csv" + if (config.sheet.index >= 0) {
                 "&gid=${config.sheet.index}"
             } else {
                 ""
