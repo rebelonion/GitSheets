@@ -78,12 +78,26 @@ class SheetsTracker(private val config: AppConfig) {
 
         val detailedMessages = generateDetailedMessages(config, previousData, currentData)
 
-        println("data:\n$currentData")
         writeFile(dataFile, currentData)
         writeFile(hashFile, currentHash)
 
         val commitMessage = "Update sheet data - ${Clock.System.now()}"
-
+        val (committed, error) = syncToRemoteAndCommit(config, commitMessage)
+        if (committed) {
+            if (detailedMessages.isNotEmpty() && detailedMessages.size < 10) {
+                detailedMessages.forEach { message ->
+                    println(message)
+                    sendWebhook(message)
+                }
+            } else {
+                val fallbackMessage = "Sheet updated successfully at ${Clock.System.now()}"
+                println(fallbackMessage)
+                sendWebhook(fallbackMessage)
+            }
+        } else if (error != null) {
+            println("Git error: $error")
+            sendWebhook("Git error during push: $error")
+        }
     }
 
     private suspend fun fetchSheetData(): String? {
