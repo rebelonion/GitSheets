@@ -1,0 +1,44 @@
+# Build artifacts
+build/
+*.kexe
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# Git
+.git/
+.gitignore
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+README.md
+*.md
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Config files that might contain secrets
+config/
+*.conf
+*.toml
+*.yaml
+*.yml
+*.json
+
+# Test coverage
+coverage/
